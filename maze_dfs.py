@@ -1,4 +1,59 @@
 import time
+import turtle
+
+def draw_square(x, y, size, color):
+    turtle.up()
+    turtle.goto(x, y)
+    turtle.color(color)
+    turtle.begin_fill()
+    for _ in range(4):
+        turtle.forward(size)
+        turtle.right(90)
+    turtle.end_fill()
+
+
+def draw_maze(maze):
+    turtle.hideturtle()
+    turtle.tracer(False)
+    rows = len(maze)
+    cols = len(maze[0])
+    square_size = 20
+    offset_x = - cols * square_size // 2
+    offset_y = rows * square_size // 2
+    for i in range(rows):
+        for j in range(cols):
+            x = offset_x + j * square_size
+            y = offset_y - i * square_size
+            if maze[i][j] == '%':
+                draw_square(x, y, square_size, 'black')
+            elif maze[i][j] == 'S':
+                draw_square(x, y, square_size, 'red')
+            elif maze[i][j] == 'G':
+                draw_square(x, y, square_size, 'green')
+            else:
+                draw_square(x, y, square_size, 'white')
+
+
+def draw_path(maze, path, start_pos):
+    turtle.hideturtle()
+    turtle.tracer(True)
+    rows = len(maze)
+    cols = len(maze[0])
+    square_size = 20
+    offset_x = - cols * square_size // 2
+    offset_y = rows * square_size // 2
+    y, x = start_pos
+    for step in path[:-1]:
+        if step == 'U':
+            y -= 1
+        elif step == 'D':
+            y += 1
+        elif step == 'L':
+            x -= 1
+        elif step == 'R':
+            x += 1
+        draw_square(offset_x + x * square_size, offset_y - y * square_size, square_size, 'cyan')
+
 
 def read_maze_file(file_path: str):
     with open(file_path, 'r') as f:
@@ -82,4 +137,9 @@ if __name__ == '__main__':
     else:
         print('Find:', ','.join(path))
         print(f'Run time: {run_time:.3f} {type_time}')
+        command = input('Do you like to print the maze with turtle [y/n]? ')
+        if command.lower() == 'y':
+            draw_maze(maze)
+            draw_path(maze, path, start_pos)
+            turtle.done()
 
